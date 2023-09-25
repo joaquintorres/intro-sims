@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -O3 -fomit-frame-pointer -ffast-math -march=ivybridge -Wall -Wpedantic 
+CFLAGS = -O3 -fomit-frame-pointer -ffast-math -march=native -Wall -Wpedantic 
 LDFLAGS = -lm
 
 OBJECT_FILES = utils.o pi.o main.o 
