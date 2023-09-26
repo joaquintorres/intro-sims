@@ -22,4 +22,4 @@ $(EXE): $(OBJECT_FILES)
 
 
 clean:
-	rm -f $(EXE) $(EXE_PI) $(OBJECT_FILES) *.dat *.bin 
+	rm -f $(EXE) $(EXE_PI) $(OBJECT_FILES) $(OBJECT_FILES_PI) *.dat *.bin 
