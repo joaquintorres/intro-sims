@@ -38,16 +38,18 @@ double montecarlo_integration(vector<pair_t> vec, function<double(double)> f){
     out_file.open(OUTNAME_BIN, ios::binary);
     if (!out_file.is_open())
         cerr << "Could not open " << OUTNAME_BIN << endl;
+    int cnt;
 
     for (pair_t pair : vec){
         if (pair.y < f(pair.x)){
             out_file.write(reinterpret_cast<char*>(&pair.x), sizeof(double));
+            cnt++;
         }
     }
 
     out_file.close();
 
-    return 0.0;
+    return (double) cnt / (double) vec.size();
 }
 
 int main(int argc, char * argv[]){
@@ -55,7 +57,7 @@ int main(int argc, char * argv[]){
     char * filename;
     ifstream input_file; 
     int npairs;
-    vector<pair_t> invec;
+    vector<pair_t> invec, invec_importance;
 
     st = validate_arguments(argc, argv, &filename);
 
@@ -69,6 +71,7 @@ int main(int argc, char * argv[]){
     cout << "Number of pairs: " << npairs << endl;
     
     invec = vector_pairs(npairs, XLOW, XHIGH, YLOW, YHIGH);
+    invec_importance = vector_pairs_importance_sampling(npairs, 1.0, 0.5, YLOW, YHIGH);
 
     auto f = [](double x) -> double {
         return (x - 1) * (x - 1);
@@ -78,5 +81,9 @@ int main(int argc, char * argv[]){
 
     cout << "Integration result = " << result << endl;
     
+    result = montecarlo_integration(invec_importance, f);
+
+    cout << "Integration result with importance sampling = " << result << endl;
+
     return 0;
 }

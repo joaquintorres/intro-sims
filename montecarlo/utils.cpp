@@ -23,3 +23,18 @@ vector<pair_t> vector_pairs(int N, double x_low, double x_high, double y_low, do
     return vec;
 }
 
+vector<pair_t> vector_pairs_importance_sampling(int N, double x_mean, double x_std, double y_low, double y_high){
+    vector<pair_t> vec(N);
+
+    random_device rd;  // Will be used to obtain a seed for the random number engine
+    mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    normal_distribution<> disx(x_mean, x_std);
+    uniform_real_distribution<> disy(y_low, y_high);
+    
+    for (int i = 0; i < N; i++){\
+        vec[i].x = disx(gen);
+        vec[i].y = disy(gen);
+    }
+
+    return vec;
+}
