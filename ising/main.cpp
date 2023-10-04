@@ -35,6 +35,7 @@ ising_sys_t parse_input(char * filename){
     input_file.open(filename);
     input_file >> isys.n;
     input_file >> isys.steps;
+    input_file >> isys.temperature;
     input_file >> isys.restfile;
 
     input_file.close();
@@ -58,6 +59,7 @@ int main(int argc, char * argv[]){
 
     cout << "N = " << isys.n << endl;
     cout << "Number of steps " << isys.steps << endl;
+    cout << "Temperature = " << isys.temperature << endl;
     cout << "Restfile: " << isys.restfile << endl;
 
     grid = init_grid(&isys);
