@@ -1,14 +1,16 @@
 #include <iostream>
 #include <fstream>
-#include <functional>
 #include <filesystem>
-#include <vector>
+#include <Eigen/Dense>
+
+#include "ising.h"
 #include "types.h"
 
 #define FILENAME_POS 1
 #define NARGS 2
 
 using namespace std;
+using Eigen::MatrixXi;
 
 bool validate_arguments(int argc, char * argv[], char * filename[]){
     if (argc != NARGS){
@@ -45,7 +47,8 @@ int main(int argc, char * argv[]){
     char * filename;
     ifstream input_file; 
     ising_sys_t isys;
-
+    MatrixXi grid;
+    
     st = validate_arguments(argc, argv, &filename);
 
     if (!st)
@@ -56,6 +59,11 @@ int main(int argc, char * argv[]){
     cout << "N = " << isys.n << endl;
     cout << "Number of steps " << isys.steps << endl;
     cout << "Restfile: " << isys.restfile << endl;
-    
+
+    grid = init_grid(&isys);
+
+    cout << "Initial grid = " << endl;
+    cout << grid << endl;
+
     return 0;
 }
