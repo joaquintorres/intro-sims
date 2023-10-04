@@ -8,13 +8,6 @@
 #define FILENAME_POS 1
 #define NARGS 2
 
-#define XLOW  0.0
-#define XHIGH 2.0
-#define YLOW  0.0
-#define YHIGH 1.0
-
-#define OUTNAME_BIN "accepted.bin"
-
 using namespace std;
 
 bool validate_arguments(int argc, char * argv[], char * filename[]){
