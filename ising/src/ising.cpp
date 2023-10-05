@@ -5,8 +5,6 @@
 #include "types.h"
 
 
-using namespace std;
-
 // Generate initial grid with periodic boundary conditions
 Eigen::MatrixXi init_grid(ising_sys_t * isys){
     random_device rd;
