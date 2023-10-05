@@ -3,14 +3,13 @@
 #include "types.h"
 
 using namespace std;
-using Eigen::MatrixXi;
 
 
-MatrixXi init_grid(ising_sys_t * isys){
+Eigen::MatrixXi init_grid(ising_sys_t * isys){
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> distribution(0, 1);
-    MatrixXi grid(isys->n, isys->n);
+    Eigen::MatrixXi grid(isys->n, isys->n);
     int tmp;
     
     for (int i=0; i < isys-> n; i++){

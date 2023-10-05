@@ -4,8 +4,7 @@
 #include <Eigen/Dense>
 #include "types.h"
 
-using Eigen::MatrixXi;
 
-MatrixXi init_grid(ising_sys_t * isys);
+Eigen::MatrixXi init_grid(ising_sys_t * isys);
 
 #endif

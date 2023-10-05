@@ -10,7 +10,6 @@
 #define NARGS 2
 
 using namespace std;
-using Eigen::MatrixXi;
 
 bool validate_arguments(int argc, char * argv[], char * filename[]){
     if (argc != NARGS){
@@ -48,7 +47,7 @@ int main(int argc, char * argv[]){
     char * filename;
     ifstream input_file; 
     ising_sys_t isys;
-    MatrixXi grid;
+    Eigen::MatrixXi grid;
     
     st = validate_arguments(argc, argv, &filename);
 
