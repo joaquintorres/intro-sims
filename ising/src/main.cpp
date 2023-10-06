@@ -67,7 +67,7 @@ int main(int argc, char * argv[]){
     grid = init_grid(&isys);
 
     cout << "Initial grid = " << endl;
-    // cout << grid << endl;
+    cout << grid << endl;
 
     // test reading and writing
     write_grid(isys.restfile, grid);
@@ -76,6 +76,8 @@ int main(int argc, char * argv[]){
 
     double erg = energy(grid, &isys);
     cout << "Initial Energy = " << erg << endl;
+    double delta_erg = delta_energy(grid, &isys, 4, 4);
+    cout << "Delta Energy for changing (4,4) = " << delta_erg << endl;
 
     return 0;
 }

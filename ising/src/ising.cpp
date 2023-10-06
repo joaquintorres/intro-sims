@@ -48,3 +48,18 @@ double energy(Eigen::MatrixXi & grid, ising_sys_t * isys){
 
     return (double) result * (-isys->interaction);
 }
+
+// Returns energy difference when a spin flip is performed
+double delta_energy(Eigen::MatrixXi & grid, ising_sys_t * isys, int x, int y){
+    int result = 0;
+    // first neighbors
+    result += grid(x+1,y);
+    result += grid(x-1,y);
+    result += grid(x,y+1);
+    result += grid(x,y-1);
+
+    result *= (-grid(x,y));
+
+    return (double) result * 2.0 * isys->interaction;
+}
+

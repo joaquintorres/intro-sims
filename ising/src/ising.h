@@ -8,4 +8,5 @@
 Eigen::MatrixXi init_grid(ising_sys_t * isys);
 void periodic_boundary_conditions(Eigen:: MatrixXi & grid);
 double energy(Eigen::MatrixXi & grid, ising_sys_t * isys);
+double delta_energy(Eigen::MatrixXi & grid, ising_sys_t * isys, int x, int y);
 #endif
