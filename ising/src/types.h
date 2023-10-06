@@ -13,6 +13,8 @@ typedef struct {
     double energy; // System energy
     double magnetization; // System magnetization
     string restfile; // filename for storing and restoring the state
+    string ergfile; // filename for storing and restoring the state's energy
+    string magfile; // filename for storing and restoring the state's magnetization
 } ising_sys_t;
 
 #endif

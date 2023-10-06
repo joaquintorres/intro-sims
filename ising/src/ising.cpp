@@ -45,12 +45,10 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
     double delta_erg, delta_mag, mc_sample;
     double beta = 1.0 / (KBOLTZ * isys->temperature);
 
-    //TEMP////////////////////////////////
     std::ofstream ergfile;
     std::ofstream magfile;
-    ergfile.open("ergfile.test", std::ios_base::app); // append instead of overwrite
-    magfile.open("magfile.test", std::ios_base::app); // append instead of overwrite
-    //////////////////////////////////////
+    ergfile.open(isys->ergfile, std::ios_base::app | std::ios::binary); // append instead of overwrite
+    magfile.open(isys->magfile, std::ios_base::app | std::ios::binary);
 
     for (int i=0; i < isys->steps; i++){
         spinflip_x = spinflip_dis(gen);
@@ -75,10 +73,9 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
                 isys->magnetization += delta_mag;
             }
         }
-       //TEMP//////////////////////////////////// 
-        ergfile << isys->energy << std::endl;
-        magfile << isys->magnetization << std::endl;
-       //TEMP////////////////////////////////////
+        // Write mean values
+        ergfile.write(reinterpret_cast<char*>(&isys->energy), sizeof(double));
+        magfile.write(reinterpret_cast<char*>(&isys->magnetization), sizeof(double));
     }
 }
 

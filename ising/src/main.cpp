@@ -40,6 +40,8 @@ ising_sys_t parse_input(char * filename){
     input_file >> isys.temperature;
     input_file >> isys.interaction;
     input_file >> isys.restfile;
+    input_file >> isys.ergfile;
+    input_file >> isys.magfile;
 
     input_file.close();
     
