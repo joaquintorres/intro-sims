@@ -1,9 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <string>
 #include <Eigen/Dense>
 
 #include "ising.h"
+#include "io.h"
 #include "types.h"
 
 #define FILENAME_POS 1
@@ -65,6 +67,11 @@ int main(int argc, char * argv[]){
 
     cout << "Initial grid = " << endl;
     cout << grid << endl;
+
+    // test reading and writing
+    write_grid(isys.restfile, grid);
+    Eigen::MatrixXi test;
+    read_grid(isys.restfile, test);
 
     return 0;
 }
