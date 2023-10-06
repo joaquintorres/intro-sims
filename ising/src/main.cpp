@@ -37,6 +37,7 @@ ising_sys_t parse_input(char * filename){
     input_file >> isys.n;
     input_file >> isys.steps;
     input_file >> isys.temperature;
+    input_file >> isys.interaction;
     input_file >> isys.restfile;
 
     input_file.close();
@@ -66,12 +67,15 @@ int main(int argc, char * argv[]){
     grid = init_grid(&isys);
 
     cout << "Initial grid = " << endl;
-    cout << grid << endl;
+    // cout << grid << endl;
 
     // test reading and writing
     write_grid(isys.restfile, grid);
     Eigen::MatrixXi test;
     read_grid(isys.restfile, test);
+
+    double erg = energy(grid, &isys);
+    cout << "Initial Energy = " << erg << endl;
 
     return 0;
 }
