@@ -29,6 +29,7 @@ bool validate_arguments(int argc, char * argv[], char * filename[]){
     }
 }
 
+// Parses input and initializes variables
 ising_sys_t parse_input(char * filename){
     ising_sys_t isys;
     ifstream input_file;
@@ -42,6 +43,8 @@ ising_sys_t parse_input(char * filename){
 
     input_file.close();
     
+    isys.energy = 0.0;
+    isys.magnetization = 0.0;
     return isys;
 }
 
@@ -74,10 +77,9 @@ int main(int argc, char * argv[]){
     Eigen::MatrixXi test;
     read_grid(isys.restfile, test);
 
-    double erg = energy(grid, &isys);
-    cout << "Initial Energy = " << erg << endl;
-    double delta_erg = delta_energy(grid, &isys, 4, 4);
-    cout << "Delta Energy for changing (4,4) = " << delta_erg << endl;
+    isys.energy = energy(grid, &isys);
+    cout << "Initial Energy = " << isys.energy << endl;
+    metropolis_montecarlo(grid, &isys);
 
     return 0;
 }
