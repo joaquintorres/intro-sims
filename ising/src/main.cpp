@@ -50,6 +50,32 @@ ising_sys_t parse_input(char * filename){
     return isys;
 }
 
+// Restores state from files
+bool restore_state(Eigen:: MatrixXi & grid, ising_sys_t * isys){
+    if (filesystem::exists(isys->restfile) & filesystem::exists(isys->ergfile) & filesystem::exists(isys->magfile)){
+        cout << "Restoring previous state from " << isys->restfile << endl;
+        read_grid(isys->restfile, grid);
+
+        cout << "Restoring previous energy from " << isys->ergfile << endl;
+        ifstream in_ergfile(isys->ergfile, ios::binary);
+        if (!in_ergfile.is_open()) {
+            cerr << "Error: Unable to open the binary file." << endl;
+            return 1;
+        }
+        
+        in_ergfile.seekg(0, ios::end); // Move the file pointer to the end
+        streampos fsize = in_ergfile.tellg(); // Get the file size
+        in_ergfile.seekg(fsize - (streampos) sizeof(double)); // Move the file pointer to the position of the last double
+        in_ergfile.read(reinterpret_cast<char*>(&isys->energy), sizeof(double));
+
+        return true;
+
+    }
+    else {
+        return false;
+    }
+}
+
 int main(int argc, char * argv[]){
     bool st;
     char * filename;
@@ -72,7 +98,7 @@ int main(int argc, char * argv[]){
     grid = init_grid(&isys);
 
     cout << "Initial grid = " << endl;
-    cout << grid << endl;
+    // cout << grid << endl;
 
     // test reading and writing
     write_grid(isys.restfile, grid);
