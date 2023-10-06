@@ -1,0 +1,45 @@
+#include <Eigen/Dense>
+#include <H5Cpp.h>
+#include <iostream>
+#include <string>
+#include "io.h"
+#include "types.h"
+
+
+// Function to write an Eigen matrix to an HDF5 file
+void write_matrix(const std::string& filename, const Eigen::MatrixXi& matrix, const std::string& dataset_name) {
+    H5::H5File file(filename, H5F_ACC_TRUNC);
+    
+    // Create a dataspace
+    hsize_t dims[2];
+    dims[0] = matrix.rows();
+    dims[1] = matrix.cols();
+    H5::DataSpace dataspace(2, dims);
+    
+    // Create a dataset
+    H5::DataSet dataset = file.createDataSet(dataset_name, H5::PredType::NATIVE_INT, dataspace);
+    
+    // Write the data
+    dataset.write(matrix.data(), H5::PredType::NATIVE_INT);
+}
+
+Eigen::MatrixXi read_matrix(const std::string& filename, const std::string& dataset_name) {
+    Eigen::MatrixXi result;
+
+    H5::H5File file(filename, H5F_ACC_RDONLY);
+    H5::DataSet dataset = file.openDataSet(dataset_name);
+
+    H5::DataSpace dataspace = dataset.getSpace();
+    int rank = dataspace.getSimpleExtentNdims();
+    hsize_t dims[2];
+    dataspace.getSimpleExtentDims(dims, NULL);
+
+    if (rank != 2) {
+        throw std::runtime_error("Invalid rank of the dataset. Expected rank 2.");
+    }
+
+    result.resize(dims[0], dims[1]);
+    dataset.read(result.data(), H5::PredType::NATIVE_INT);
+
+    return result;
+}

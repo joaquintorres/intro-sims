@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.10)
+project(ising)
+
+find_package(HDF5 REQUIRED COMPONENTS C CXX)
+if (HDF5_FOUND)
+    include_directories(${HDF5_INCLUDE_DIRS})
+    add_executable(ising main.cpp ising.cpp io.cpp)
+    target_link_libraries(ising ${HDF5_LIBRARIES})
+else()
+    message(FATAL_ERROR "HDF5 not found, please install it or specify its location manually.")
+endif()
+
+target_include_directories(ising PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+include_directories(ising PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/eigen-3.4.0)
+
+target_compile_options(ising PRIVATE -Wall -Wpedantic -O3 -fomit-frame-pointer -ffast-math -march=native -static)

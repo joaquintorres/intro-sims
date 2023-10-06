@@ -1,0 +1,10 @@
+#ifndef IO__H
+#define IO__H
+#include <Eigen/Core>
+#include <H5Cpp.h>
+#include <string>
+#include "types.h"
+
+void write_matrix(const std::string& filename, const Eigen::MatrixXi& matrix, const std::string& datasetName);
+Eigen::MatrixXi read_matrix(const std::string& filename, const std::string& dataset_name);
+#endif
