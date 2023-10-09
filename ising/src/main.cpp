@@ -37,6 +37,7 @@ ising_sys_t parse_input(char * filename){
     input_file.open(filename);
     input_file >> isys.n;
     input_file >> isys.steps;
+    input_file >> isys.writestep;
     input_file >> isys.temperature;
     input_file >> isys.interaction;
     input_file >> isys.restfile;
@@ -68,6 +69,21 @@ bool restore_state(Eigen:: MatrixXi & grid, ising_sys_t * isys){
         in_ergfile.seekg(fsize - (streampos) sizeof(double)); // Move the file pointer to the position of the last double
         in_ergfile.read(reinterpret_cast<char*>(&isys->energy), sizeof(double));
 
+        cout << "Restoring previous magnetization from " << isys->magfile << endl;
+        ifstream in_magfile(isys->magfile, ios::binary);
+        if (!in_magfile.is_open()) {
+            cerr << "Error: Unable to open the binary file." << endl;
+            return 1;
+        }
+        cout << isys->energy << endl;
+
+        in_magfile.seekg(0, ios::end); // Move the file pointer to the end
+        streampos msize = in_magfile.tellg(); // Get the file size
+        in_magfile.seekg(msize - (streampos) sizeof(double)); // Move the file pointer to the position of the last double
+        in_magfile.read(reinterpret_cast<char*>(&isys->magnetization), sizeof(double));
+        cout << isys->magnetization << endl;
+        
+        
         return true;
 
     }
@@ -95,17 +111,18 @@ int main(int argc, char * argv[]){
     cout << "Temperature = " << isys.temperature << endl;
     cout << "Restfile: " << isys.restfile << endl;
 
-    grid = init_grid(&isys);
+    st = restore_state(grid, &isys);
+    
+    // Don't initialize stuff if it's restored 
+    if (!st){
+      grid = init_grid(&isys);
+      cout << "Initial grid = " << endl;
+      //cout << grid << endl;
+      write_grid(isys.restfile, grid);
+      isys.energy = energy(grid, &isys);
+      isys.magnetization = magnetization(grid, &isys);
+    }
 
-    cout << "Initial grid = " << endl;
-    // cout << grid << endl;
-
-    // test reading and writing
-    write_grid(isys.restfile, grid);
-    Eigen::MatrixXi test;
-    read_grid(isys.restfile, test);
-
-    isys.energy = energy(grid, &isys);
     cout << "Initial Energy = " << isys.energy << endl;
     metropolis_montecarlo(grid, &isys);
 

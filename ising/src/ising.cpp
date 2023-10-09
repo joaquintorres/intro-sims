@@ -1,6 +1,7 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <random>
+#include "io.h"
 #include "ising.h"
 #include "types.h"
 
@@ -74,9 +75,12 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
             }
         }
         // Write mean values
-        ergfile.write(reinterpret_cast<char*>(&isys->energy), sizeof(double));
-        magfile.write(reinterpret_cast<char*>(&isys->magnetization), sizeof(double));
+        if (i % isys->writestep == 0){
+            ergfile.write(reinterpret_cast<char*>(&isys->energy), sizeof(double));
+            magfile.write(reinterpret_cast<char*>(&isys->magnetization), sizeof(double));
+        }
     }
+    write_grid(isys->restfile, grid);
 }
 
 // Explicit Hamiltonian calculated taking into account periodic 
