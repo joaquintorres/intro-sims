@@ -1,5 +1,6 @@
 #include <cmath>
 #include <Eigen/Dense>
+#include <ostream>
 #include <random>
 #include "io.h"
 #include "ising.h"
@@ -21,6 +22,7 @@ Eigen::MatrixXi init_grid(ising_sys_t * isys){
         }
     }
     periodic_boundary_conditions(grid);
+    grid.fill(1);
     return grid;
 }
 
@@ -109,7 +111,7 @@ double delta_energy(Eigen::MatrixXi & grid, ising_sys_t * isys, int x, int y){
     result += grid(x,y+1);
     result += grid(x,y-1);
 
-    result *= (-grid(x,y));
+    result *= grid(x,y);
 
     return (double) result * 2.0 * isys->interaction;
 }
