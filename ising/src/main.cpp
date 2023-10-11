@@ -108,8 +108,12 @@ int main(int argc, char * argv[]){
 
     cout << "N = " << isys.n << endl;
     cout << "Number of steps " << isys.steps << endl;
+    cout << "Writesteps: " << isys.writestep << endl;
     cout << "Temperature = " << isys.temperature << endl;
+    cout << "J = " << isys.interaction << endl;
     cout << "Restfile: " << isys.restfile << endl;
+    cout << "Energy file: " << isys.ergfile << endl;
+    cout << "Magnetization file: " << isys.magfile << endl;
 
     st = restore_state(grid, &isys);
     
@@ -117,7 +121,7 @@ int main(int argc, char * argv[]){
     if (!st){
       grid = init_grid(&isys);
       cout << "Initial grid = " << endl;
-      //cout << grid << endl;
+      // cout << grid << endl;
       write_grid(isys.restfile, grid);
       isys.energy = energy(grid, &isys);
       isys.magnetization = magnetization(grid, &isys);
