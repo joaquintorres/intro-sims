@@ -1,6 +1,8 @@
 #include <cmath>
-#include <Eigen/Dense>
+#include <iostream>
+#include <fstream>
 #include <random>
+#include <Eigen/Dense>
 #include "io.h"
 #include "ising.h"
 #include "types.h"
@@ -33,8 +35,7 @@ void periodic_boundary_conditions(Eigen::MatrixXi & grid){
     grid.col(grid.cols() - OFFSET_PBC) = grid.col(OFFSET_PBC);
 }
 
-#include <iostream>
-#include <fstream>
+
 // Iterates Metropolis Monte Carlo
 void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
     random_device rd;
@@ -131,5 +132,5 @@ double magnetization(Eigen::MatrixXi & grid, ising_sys_t * isys){
 
 // Returns magnetization difference when a spin flip is performed
 double delta_magnetization(Eigen::MatrixXi & grid, ising_sys_t * isys, int x, int y){
-    return 2.0 * (double) grid(x,y);
+    return -2.0 * (double) grid(x,y);
 }
