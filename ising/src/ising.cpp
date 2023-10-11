@@ -1,6 +1,5 @@
 #include <cmath>
 #include <Eigen/Dense>
-#include <ostream>
 #include <random>
 #include "io.h"
 #include "ising.h"
@@ -22,7 +21,6 @@ Eigen::MatrixXi init_grid(ising_sys_t * isys){
         }
     }
     periodic_boundary_conditions(grid);
-    grid.fill(1);
     return grid;
 }
 
