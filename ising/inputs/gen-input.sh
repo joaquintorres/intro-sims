@@ -17,5 +17,5 @@ prefix="input-t"
 
 for i in `seq 0.1 0.1 5.0`;
     do echo "$i"; 
-    sed "4s/.*/$i.0/" input.in > $prefix-$i.in; 
+    sed "4s/.*/$i/" input.in > $prefix-$i.in; 
 done
