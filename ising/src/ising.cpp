@@ -58,21 +58,25 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
 
         delta_erg = delta_energy(grid, isys, spinflip_x, spinflip_y);
         delta_mag = delta_magnetization(grid, isys, spinflip_x, spinflip_y);
+        // std::cout << "delta_energy = " << delta_erg << std::endl;
 
         if (delta_erg < 0){
             grid(spinflip_x,spinflip_y) = -grid(spinflip_x,spinflip_y); // Flips spin if energy is lower
             // Update mean values
             isys->energy += delta_erg;
             isys->magnetization += delta_mag;
+            periodic_boundary_conditions(grid);
         }
         else{
             mc_sample = uni(gen);
             // Acceptance probabilty is exp(-beta * delta_energy)
+            // std::cout << "exp = " << std::exp(-beta * delta_erg) << std::endl;
             if (mc_sample < std::exp(-beta * delta_erg)){
                 grid(spinflip_x,spinflip_y) = -grid(spinflip_x,spinflip_y);
                 // Update mean values
                 isys->energy += delta_erg;
                 isys->magnetization += delta_mag;
+                periodic_boundary_conditions(grid);
             }
         }
         // Write mean values
