@@ -3,6 +3,9 @@
 #include <filesystem>
 #include <string>
 #include <Eigen/Dense>
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
 
 #include "ising.h"
 #include "io.h"
@@ -127,8 +130,24 @@ int main(int argc, char * argv[]){
       isys.magnetization = magnetization(grid, &isys);
     }
 
+#ifdef ENABLE_MPI
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &isys.mpisize);
+    MPI_Comm_rank(MPI_COMM_WORLD, &isys.mpirank);
+    
+    if (!isys.mpirank)
+        cout << "size = " << isys.mpisize << endl;
+    
+    cout << "rank = " << isys.mpirank << endl;
+
+#endif
+    
     cout << "Initial Energy = " << isys.energy << endl;
     metropolis_montecarlo(grid, &isys);
 
+#ifdef ENABLE_MPI
+    MPI_Finalize();
+#endif
     return 0;
 }

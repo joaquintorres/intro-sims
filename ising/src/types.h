@@ -9,6 +9,8 @@ typedef struct {
     int n; // (n, n) grid 
     int steps; // simulation steps
     int writestep; // interval for writing output
+    int mpirank;
+    int mpisize;
     double temperature; //system temperature in no units 
     double interaction; // J, coupling constant
     double energy; // System energy
