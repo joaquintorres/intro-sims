@@ -16,6 +16,9 @@
 
 using namespace std;
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 bool validate_arguments(int argc, char * argv[], char * filename[]){
     if (argc != NARGS){
         cerr << "Wrong number of arguments!" << endl;
@@ -129,6 +132,31 @@ int main(int argc, char * argv[]){
       isys.energy = energy(grid, &isys);
       isys.magnetization = magnetization(grid, &isys);
     }
+#ifdef ENABLE_GL
+    const int width = 800;
+    const int height = 800;
+
+    if (!glfwInit()) {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        return -1;
+    }
+
+    GLFWwindow* window = glfwCreateWindow(width, height, "OpenGL Matrix Example", NULL, NULL);
+    if (!window) {
+        std::cerr << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwMakeContextCurrent(window);
+
+    if (glewInit() != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+#endif
 
 #ifdef ENABLE_MPI
 
@@ -144,8 +172,15 @@ int main(int argc, char * argv[]){
 #endif
     
     cout << "Initial Energy = " << isys.energy << endl;
-    metropolis_montecarlo(grid, &isys);
 
+#ifdef ENABLE_GL
+    metropolis_montecarlo(grid, &isys, window);
+    glfwTerminate();
+#else
+    metropolis_montecarlo(grid, &isys);
+#endif
+
+ 
 #ifdef ENABLE_MPI
     MPI_Finalize();
 #endif

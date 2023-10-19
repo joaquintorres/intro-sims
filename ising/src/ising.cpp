@@ -35,9 +35,46 @@ void periodic_boundary_conditions(Eigen::MatrixXi & grid){
     grid.col(grid.cols() - OFFSET_PBC) = grid.col(OFFSET_PBC);
 }
 
+#ifdef ENABLE_GL
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+// Renders the grid using OpenGL
+void renderMatrix(int width, int height, Eigen::MatrixXi matrix, int matrix_size) {
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, width, 0, height, -1, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    float cellWidth = width / static_cast<float>(matrix_size);
+    float cellHeight = height / static_cast<float>(matrix_size);
+
+    for (int row = 0; row < matrix_size + 1; row++) {
+        for (int col = 0; col < matrix_size + 1; col++){
+            glColor3f(matrix(row, col), matrix(row, col), matrix(row, col));
+
+            glBegin(GL_QUADS);
+            glVertex2f(col * cellWidth, row * cellHeight);
+            glVertex2f((col + 1) * cellWidth, row * cellHeight);
+            glVertex2f((col + 1) * cellWidth, (row + 1) * cellHeight);
+            glVertex2f(col * cellWidth, (row + 1) * cellHeight);
+            glEnd();
+        }
+    }
+}
+#endif 
 
 // Iterates Metropolis Monte Carlo
+#ifdef ENABLE_GL
+void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys, GLFWwindow* window){
+#else
 void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
+#endif
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> spinflip_dis(OFFSET_PBC, isys->n);
@@ -70,7 +107,7 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
         else{
             mc_sample = uni(gen);
             // Acceptance probabilty is exp(-beta * delta_energy)
-            // std::cout << "exp = " << std::exp(-beta * delta_erg) << std::endl;
+            // std::cout << "exp = " << std::exp(-beta * delta_erg) <<" mc_sample" << mc_sample << std::endl;
             if (mc_sample < std::exp(-beta * delta_erg)){
                 grid(spinflip_x,spinflip_y) = -grid(spinflip_x,spinflip_y);
                 // Update mean values
@@ -83,6 +120,11 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
         if (i % isys->writestep == 0){
             ergfile.write(reinterpret_cast<char*>(&isys->energy), sizeof(double));
             magfile.write(reinterpret_cast<char*>(&isys->magnetization), sizeof(double));
+            #ifdef ENABLE_GL
+            renderMatrix(800, 800, grid, isys->n);
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+            #endif
         }
     }
     write_grid(isys->restfile, grid);
