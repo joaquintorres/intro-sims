@@ -127,7 +127,7 @@ int main(int argc, char * argv[]){
     if (!st){
       grid = init_grid(&isys);
       cout << "Initial grid = " << endl;
-      // cout << grid << endl;
+      cout << grid << endl;
       write_grid(isys.restfile, grid);
       isys.energy = energy(grid, &isys);
       isys.magnetization = magnetization(grid, &isys);
