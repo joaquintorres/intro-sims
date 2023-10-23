@@ -5,12 +5,13 @@ file_name="input.in"
 cat <<EOF > "$file_name"
 20
 3000000
-100
+1
 10.0
 1.0
 restfile.bin
 ergfile.bin
 magfile.bin
+accepted.out
 EOF
 
 prefix="input-t"
