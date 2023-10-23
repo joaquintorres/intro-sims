@@ -18,6 +18,7 @@ typedef struct {
     string restfile; // filename for storing and restoring the state
     string ergfile; // filename for storing and restoring the state's energy
     string magfile; // filename for storing and restoring the state's magnetization
+    string acceptedfile; // filename for storing the acceptance fraction
 } ising_sys_t;
 
 #endif

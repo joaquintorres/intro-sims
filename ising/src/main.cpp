@@ -52,6 +52,7 @@ ising_sys_t parse_input(char * filename){
     input_file >> isys.restfile;
     input_file >> isys.ergfile;
     input_file >> isys.magfile;
+    input_file >> isys.acceptedfile;
 
     input_file.close();
     
@@ -123,6 +124,7 @@ int main(int argc, char * argv[]){
     cout << "Restfile: " << isys.restfile << endl;
     cout << "Energy file: " << isys.ergfile << endl;
     cout << "Magnetization file: " << isys.magfile << endl;
+    cout << "Accepted fraction file: " << isys.acceptedfile << endl;
 
     st = restore_state(grid, &isys);
     

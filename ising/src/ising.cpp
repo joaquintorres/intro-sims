@@ -87,6 +87,9 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
     ergfile.open(isys->ergfile, std::ios_base::app | std::ios::binary); // append instead of overwrite
     magfile.open(isys->magfile, std::ios_base::app | std::ios::binary);
 
+    std::ofstream accfile(isys->acceptedfile,std::ios::app);
+    int accepted = 0;
+
     for (int i=0; i < isys->steps; i++){
         spinflip_x = (int) (uni(gen)*20.0) + 1;
         spinflip_y = (int) (uni(gen)*20.0) + 1;
@@ -101,6 +104,7 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
             isys->energy += delta_erg;
             isys->magnetization += delta_mag;
             periodic_boundary_conditions(grid);
+            accepted++;
         }
         else{
             mc_sample = uni(gen);
@@ -112,6 +116,7 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
                 isys->energy += delta_erg;
                 isys->magnetization += delta_mag;
                 periodic_boundary_conditions(grid);
+                accepted++;
             }
         }
         // Write mean values
@@ -125,6 +130,7 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
             #endif
         }
     }
+    accfile << accepted << endl; 
     write_grid(isys->restfile, grid);
 }
 
