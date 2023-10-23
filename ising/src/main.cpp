@@ -46,6 +46,7 @@ ising_sys_t parse_input(char * filename){
     input_file.open(filename);
     input_file >> isys.n;
     input_file >> isys.steps;
+    input_file >> isys.thermalsteps;
     input_file >> isys.writestep;
     input_file >> isys.temperature;
     input_file >> isys.interaction;
@@ -117,7 +118,8 @@ int main(int argc, char * argv[]){
     isys = parse_input(filename); 
 
     cout << "N = " << isys.n << endl;
-    cout << "Number of steps " << isys.steps << endl;
+    cout << "Number of steps: " << isys.steps << endl;
+    cout << "Number of initial steps discarded: " << isys.thermalsteps << endl;
     cout << "Writesteps: " << isys.writestep << endl;
     cout << "Temperature = " << isys.temperature << endl;
     cout << "J = " << isys.interaction << endl;

@@ -119,8 +119,8 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
                 accepted++;
             }
         }
-        // Write mean values
-        if (i % isys->writestep == 0){
+        // Write mean values when system has thermalized
+        if ((i >= isys->thermalsteps) && (i % isys->writestep == 0)){
             ergfile.write(reinterpret_cast<char*>(&isys->energy), sizeof(double));
             magfile.write(reinterpret_cast<char*>(&isys->magnetization), sizeof(double));
             #ifdef ENABLE_GL

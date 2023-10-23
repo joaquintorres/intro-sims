@@ -8,6 +8,7 @@ using namespace std;
 typedef struct {
     int n; // (n, n) grid 
     int steps; // simulation steps
+    int thermalsteps; // steps discarded as thermalization.
     int writestep; // interval for writing output
     int mpirank;
     int mpisize;
