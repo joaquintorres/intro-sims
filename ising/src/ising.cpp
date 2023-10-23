@@ -7,7 +7,6 @@
 #include "ising.h"
 #include "types.h"
 
-
 // Generate initial grid with periodic boundary conditions
 Eigen::MatrixXi init_grid(ising_sys_t * isys){
     random_device rd;
@@ -76,10 +75,9 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys, GLFWwindo
 void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
 #endif
     random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<int> spinflip_dis(OFFSET_PBC, isys->n);
+    mt19937_64 gen(rd());
     uniform_real_distribution<double> uni(0.0, 1.0);
-    
+
     int spinflip_x, spinflip_y;
     double delta_erg, delta_mag, mc_sample;
     double beta = 1.0 / (KBOLTZ * isys->temperature);
@@ -90,8 +88,8 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
     magfile.open(isys->magfile, std::ios_base::app | std::ios::binary);
 
     for (int i=0; i < isys->steps; i++){
-        spinflip_x = spinflip_dis(gen);
-        spinflip_y = spinflip_dis(gen);
+        spinflip_x = (int) (uni(gen)*20.0) + 1;
+        spinflip_y = (int) (uni(gen)*20.0) + 1;
 
         delta_erg = delta_energy(grid, isys, spinflip_x, spinflip_y);
         delta_mag = delta_magnetization(grid, isys, spinflip_x, spinflip_y);
@@ -144,7 +142,7 @@ double energy(Eigen::MatrixXi & grid, ising_sys_t * isys){
         }
     }
 
-    return (double) result * (-isys->interaction);
+    return (double) result * (-isys->interaction) / 2.0;
 }
 
 // Returns energy difference when a spin flip is performed
