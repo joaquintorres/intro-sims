@@ -7,6 +7,11 @@
 #include <mpi.h>
 #endif
 
+#ifdef ENABLE_GL
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#endif
+
 #include "ising.h"
 #include "io.h"
 #include "types.h"
@@ -16,8 +21,6 @@
 
 using namespace std;
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 bool validate_arguments(int argc, char * argv[], char * filename[]){
     if (argc != NARGS){
