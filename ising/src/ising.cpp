@@ -91,8 +91,8 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
     int accepted = 0;
 
     for (int i=0; i < isys->steps; i++){
-        spinflip_x = (int) (uni(gen)*20.0) + 1;
-        spinflip_y = (int) (uni(gen)*20.0) + 1;
+        spinflip_x = (int) (uni(gen)* isys->n) + 1;
+        spinflip_y = (int) (uni(gen)* isys->n) + 1;
 
         delta_erg = delta_energy(grid, isys, spinflip_x, spinflip_y);
         delta_mag = delta_magnetization(grid, isys, spinflip_x, spinflip_y);
