@@ -64,12 +64,22 @@ ising_sys_t parse_input(char * filename){
 
 // Restores state from files
 bool restore_state(Eigen:: MatrixXi & grid, ising_sys_t * isys){
-    if (filesystem::exists(isys->restfile) & filesystem::exists(isys->ergfile) & filesystem::exists(isys->magfile)){
-        cout << "Restoring previous state from " << isys->restfile << endl;
-        read_grid(isys->restfile, grid);
+    #ifdef ENABLE_MPI
+    string restfile = std::to_string(isys->mpirank) + isys->restfile;
+    string ergfile = std::to_string(isys->mpirank) + isys->ergfile;
+    string magfile = std::to_string(isys->mpirank) + isys->magfile;
+    #else
+    string restfile = isys->restfile;
+    string ergfile = isys->ergfile;
+    string magfile = isys->magfile;
+    #endif
 
-        cout << "Restoring previous energy from " << isys->ergfile << endl;
-        ifstream in_ergfile(isys->ergfile, ios::binary);
+    if (filesystem::exists(restfile) & filesystem::exists(ergfile) & filesystem::exists(magfile)){
+        cout << "Restoring previous state from " << restfile << endl;
+        read_grid(restfile, grid);
+
+        cout << "Restoring previous energy from " << ergfile << endl;
+        ifstream in_ergfile(ergfile, ios::binary);
         if (!in_ergfile.is_open()) {
             cerr << "Error: Unable to open the binary file." << endl;
             return 1;
@@ -80,8 +90,8 @@ bool restore_state(Eigen:: MatrixXi & grid, ising_sys_t * isys){
         in_ergfile.seekg(fsize - (streampos) sizeof(double)); // Move the file pointer to the position of the last double
         in_ergfile.read(reinterpret_cast<char*>(&isys->energy), sizeof(double));
 
-        cout << "Restoring previous magnetization from " << isys->magfile << endl;
-        ifstream in_magfile(isys->magfile, ios::binary);
+        cout << "Restoring previous magnetization from " << magfile << endl;
+        ifstream in_magfile(magfile, ios::binary);
         if (!in_magfile.is_open()) {
             cerr << "Error: Unable to open the binary file." << endl;
             return 1;
@@ -128,13 +138,34 @@ int main(int argc, char * argv[]){
     cout << "Magnetization file: " << isys.magfile << endl;
     cout << "Accepted fraction file: " << isys.acceptedfile << endl;
 
+#ifdef ENABLE_MPI
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &isys.mpisize);
+    MPI_Comm_rank(MPI_COMM_WORLD, &isys.mpirank);
+    
+    if (!isys.mpirank)
+        cout << "size = " << isys.mpisize << endl;
+    
+    cout << "rank = " << isys.mpirank << endl;
+
+#endif
+    
+
     st = restore_state(grid, &isys);
     
     // Don't initialize stuff if it's restored 
     if (!st){
       grid = init_grid(&isys);
+      #ifdef ENABLE_MPI
+      if (!isys->mpirank){
+        cout << "Initial grid = " << endl;
+        cout << grid << endl;
+      }
+      #else
       cout << "Initial grid = " << endl;
       cout << grid << endl;
+      #endif
       write_grid(isys.restfile, grid);
       isys.energy = energy(grid, &isys);
       isys.magnetization = magnetization(grid, &isys);
@@ -165,19 +196,6 @@ int main(int argc, char * argv[]){
 
 #endif
 
-#ifdef ENABLE_MPI
-
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &isys.mpisize);
-    MPI_Comm_rank(MPI_COMM_WORLD, &isys.mpirank);
-    
-    if (!isys.mpirank)
-        cout << "size = " << isys.mpisize << endl;
-    
-    cout << "rank = " << isys.mpirank << endl;
-
-#endif
-    
     cout << "Initial Energy = " << isys.energy << endl;
 
 #ifdef ENABLE_GL

@@ -10,7 +10,12 @@
 // Generate initial grid with periodic boundary conditions
 Eigen::MatrixXi init_grid(ising_sys_t * isys){
     random_device rd;
+    #ifdef ENABLE_MPI
+    mt19937 gen(rd() + isys->mpirank);
+    #else
     mt19937 gen(rd());
+    #endif
+
     uniform_int_distribution<int> distribution(0, 1);
     Eigen::MatrixXi grid(isys->n + 2*OFFSET_PBC, isys->n + 2*OFFSET_PBC);
     int tmp;
@@ -75,7 +80,11 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys, GLFWwindo
 void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
 #endif
     random_device rd;
+    #ifdef ENABLE_MPI
+    mt19937_64 gen(rd() + isys->mpirank);
+    #else
     mt19937_64 gen(rd());
+    #endif
     uniform_real_distribution<double> uni(0.0, 1.0);
 
     int spinflip_x, spinflip_y;
@@ -84,10 +93,19 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
 
     std::ofstream ergfile;
     std::ofstream magfile;
+
+    #ifdef ENABLE_MPI
+    // Join ranks as prefixes
+    ergfile.open(std::to_string(isys->mpirank) + isys->ergfile, std::ios_base::app | std::ios::binary);
+    magfile.open(std::to_string(isys->mpirank) + isys->magfile, std::ios_base::app | std::ios::binary);
+    std::ofstream accfile(std::to_string(isys->mpirank) + isys->acceptedfile,std::ios::app);
+    #else
     ergfile.open(isys->ergfile, std::ios_base::app | std::ios::binary); // append instead of overwrite
     magfile.open(isys->magfile, std::ios_base::app | std::ios::binary);
 
     std::ofstream accfile(isys->acceptedfile,std::ios::app);
+    #endif
+
     int accepted = 0;
 
     for (int i=0; i < isys->steps; i++){
@@ -131,7 +149,11 @@ void metropolis_montecarlo(Eigen::MatrixXi & grid, ising_sys_t * isys){
         }
     }
     accfile << accepted << endl; 
+    #ifdef ENABLE_MPI
+    write_grid(std::to_string(isys->mpirank) + isys->restfile, grid);
+    #else
     write_grid(isys->restfile, grid);
+    #endif
 }
 
 // Explicit Hamiltonian calculated taking into account periodic 
