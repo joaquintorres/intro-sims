@@ -158,7 +158,7 @@ int main(int argc, char * argv[]){
     if (!st){
       grid = init_grid(&isys);
       #ifdef ENABLE_MPI
-      if (!isys->mpirank){
+      if (!isys.mpirank){
         cout << "Initial grid = " << endl;
         cout << grid << endl;
       }
