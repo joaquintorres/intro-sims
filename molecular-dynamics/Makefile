@@ -17,12 +17,12 @@ clean:
 bench: bench1 bench2 bench3
 
 bench1: ljmd.x
-	time ./ljmd.x < argon_108.inp
+	time ./ljmd.x < inputs/argon_108.inp
 
 bench2:
-	time ./ljmd.x < argon_2916.inp
+	time ./ljmd.x < inputs/argon_2916.inp
 
 bench3:
-	time ./ljmd.x < argon_78732.inp
+	time ./ljmd.x < inputs/argon_78732.inp
 
 .PHONY: clean bench bench1 bench2 bench3
