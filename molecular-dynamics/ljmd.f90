@@ -31,13 +31,18 @@ contains
         use mdsys
         implicit none
 
-        real(kind=dbl) :: r, ffac, dx, dy, dz
+        real(kind=dbl) :: rsq, rcutsq, rinv, r6, c6, c12, ffac, dx, dy, dz
         integer :: i, j
 
         epot=0.0_dbl
         call azzero(fx,natoms)
         call azzero(fy,natoms)
         call azzero(fz,natoms)
+
+        ! Avoid repetition and sqrts
+        rcutsq = rcut*rcut
+        c6  = 4.0_dbl*epsilon*sigma**6
+        c12 = 4.0_dbl*epsilon*sigma**12
 
         do i=1, natoms
              do j=1, natoms
@@ -49,19 +54,19 @@ contains
                 dx=pbc(rx(i) - rx(j), box)
                 dy=pbc(ry(i) - ry(j), box)
                 dz=pbc(rz(i) - rz(j), box)
-                r = sqrt(dx*dx + dy*dy + dz*dz)
+
+                rsq = dx*dx + dy*dy + dz*dz
 
                 ! compute force and energy if within cutoff */
-                if (r < rcut) then
-                    ffac = -4.0_dbl*epsilon*(-12.0_dbl*((sigma/r)**12)/r   &
-                        +6.0_dbl*(sigma/r)**6/r)
-                        
-                    epot = epot + 0.5_dbl*4.0_dbl*epsilon*((sigma/r)**12 &
-                        -(sigma/r)**6.0)
+                if (rsq < rcutsq) then
+                    rinv = 1.0_dbl / rsq
+                    r6   = rinv**3
+                    ffac = (12.0_dbl*c12*r6 - 6.0_dbl*c6)*r6*rinv 
+                    epot = epot + r6*(c12*r6 - c6)
 
-                    fx(i) = fx(i) + dx/r*ffac
-                    fy(i) = fy(i) + dy/r*ffac
-                    fz(i) = fz(i) + dz/r*ffac
+                    fx(i) = fx(i) + dx*ffac
+                    fy(i) = fy(i) + dy*ffac
+                    fz(i) = fz(i) + dz*ffac
                 end if
             end do
         end do
