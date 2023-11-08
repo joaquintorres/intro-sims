@@ -8,8 +8,19 @@ OPENMP=
 FFLAGS=-O3 -march=native -ffast-math -fexpensive-optimizations -ftree-vectorize -g $(OPENMP)
 ################
 
-ljmd.x: ljmd.f90
-	$(FC) -o $@ $(FFLAGS) $<
+# Source files and modules
+SRC=kinds.f90 physconst.f90 mdsys.f90 io.f90 utils.f90 ljmd.f90 main.f90
+OBJ=$(SRC:.f90=.o)
+MOD=$(SRC:.f90=.mod)
+
+################
+# Targets
+ljmd.x: $(OBJ)
+	$(FC) -o $@ $(FFLAGS) $(OBJ)
+
+%.o: %.f90
+	$(FC) -c $(FFLAGS) $<
+
 
 clean:
 	rm -f ljmd.x *.dat *.xyz *.o *.mod perf.data
