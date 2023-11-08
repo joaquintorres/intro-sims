@@ -62,7 +62,7 @@ contains
                     rinv = 1.0_dbl / rsq
                     r6   = rinv**3
                     ffac = (12.0_dbl*c12*r6 - 6.0_dbl*c6)*r6*rinv 
-                    epot = epot + r6*(c12*r6 - c6)
+                    epot = epot + r6*(c12*r6 - c6) / 2.0_dbl
 
                     fx(i) = fx(i) + dx*ffac
                     fy(i) = fy(i) + dy*ffac
